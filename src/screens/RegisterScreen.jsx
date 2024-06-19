@@ -17,12 +17,11 @@ export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [repetirSenha, setRepetirSenha] = useState("");
-  const [nome, setNome] = useState("");
+
   const [erro, setErro] = useState({
     email: false,
     senha: false,
     repetirSenha: false,
-    nome: false,
   });
 
   const [visible, setVisible] = useState(false);
@@ -74,15 +73,9 @@ export default function RegisterScreen({ navigation }) {
     }
     setErro({ ...erro, senha: false, repetirSenha: false });
 
-    setErro({ ...erro, estado: false });
-
     cadastrarNoFirebase();
   }
 
-  /**
-   * Cadastra o usuário no Firebase Authentication e salva os dados no Firestore
-   *
-   */
   async function cadastrarNoFirebase() {
     try {
       // Cria o usuário no Firebase Authentication
@@ -91,13 +84,12 @@ export default function RegisterScreen({ navigation }) {
         email,
         senha
       );
-      // Assim que ele conseguiu criar o usuário, ele retorna o usuário
       const user = userCredential.user;
 
       console.log("Usuário cadastrado", user);
-
       const collectionRef = collection(db, "usuarios");
 
+    
       await setDoc(
         doc(
           collectionRef, // referência da coleção "tabela"
@@ -106,7 +98,6 @@ export default function RegisterScreen({ navigation }) {
         {
           nome: nome,
           email: email,
-          senha: senha,
         }
       );
 
@@ -139,13 +130,7 @@ export default function RegisterScreen({ navigation }) {
         </Portal>
         {/* FIM Modal */}
         <Text variant="headlineSmall">Faça seu Registro</Text>
-        <TextInput
-          placeholder="Digite seu nome"
-          value={nome}
-          onChangeText={setNome}
-          style={styles.input}
-          error={erro.nome}
-        />
+        
         <TextInput
           placeholder="Digite seu email"
           value={email}
@@ -169,6 +154,7 @@ export default function RegisterScreen({ navigation }) {
           style={styles.input}
           error={erro.repetirSenha}
         />
+
         <Button onPress={realizaRegistro} mode="outlined">
           Registrar
         </Button>
